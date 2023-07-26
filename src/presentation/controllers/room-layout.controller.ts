@@ -179,13 +179,22 @@ export class _RoomLayoutController {
             const isCameraEnable = participant.isCameraEnabled;
             const deviceConfig = MediaDeviceStore.getValue();
             MediaDeviceStore.updateStore({ isAudioEnable: deviceConfig.isAudioEnable, isCameraEnable: deviceConfig.isCameraEnable })
-            Promise.all([
-                participant.setMicrophoneEnabled(isAudioEnable == deviceConfig.isAudioEnable ? isAudioEnable : !isAudioEnable),
-                participant.setCameraEnabled(isCameraEnable == deviceConfig.isCameraEnable ? isCameraEnable : !isCameraEnable),
-            ]).catch((e) => {
-                console.log(e);
+            if (isAudioEnable != deviceConfig.isAudioEnable) {
+                Promise.resolve(
+                    participant.setMicrophoneEnabled(!isAudioEnable),
+                )
+            }
 
-            });
+            if (isCameraEnable != deviceConfig.isCameraEnable) {
+                Promise.resolve(
+                    participant.setCameraEnabled(!isCameraEnable),
+                )
+            }
+            // Promise.all([
+            // ]).catch((e) => {
+            //     console.log(e);
+
+            // });
         }
 
         let div = <HTMLDivElement>this.$(`participant-${identity}`);
